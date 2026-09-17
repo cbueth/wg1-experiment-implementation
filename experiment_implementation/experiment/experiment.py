@@ -767,6 +767,18 @@ class Experiment:
         if not constants.DUMMY_MODE:
             self._eye_tracker.get_tracker().flushKeybuttons(0)
 
+        # In vertical (ttb) scripts the rating options are laid out as columns that
+        # are read right-to-left, so up/down are not intuitive. There the participant
+        # moves the highlight with left/right (left = next, right = previous, because
+        # option 1 is the rightmost column) and confirms with space. All other
+        # directions keep the up/down selection.
+        if constants.SCRIPT_DIRECTION == 'ttb':
+            next_key, previous_key = 'left', 'right'
+        else:
+            next_key, previous_key = 'down', 'up'
+        confirm_keys = ['space']
+        accepted_keys = [next_key, previous_key] + confirm_keys
+
         key_pressed = ''
         keypress_timestamp = -1
         valid_answer = False
@@ -775,29 +787,12 @@ class Experiment:
 
         while not valid_answer:
 
-            while key_pressed not in ['up', 'space', 'down']:
+            while key_pressed not in accepted_keys:
                 key_pressed, keypress_timestamp = self._keyboard.get_key(
                     flush=True,
                 )
 
-            if key_pressed == 'up':
-
-                if option_num == -1:
-                    option_num = 1
-                    answer_chosen = f'option_{option_num}'
-                    self._display.fill(screen=screens[f'option_{option_num}'])
-                    self._display.show()
-
-                elif option_num == 1:
-                    pass
-
-                else:
-                    option_num -= 1
-                    answer_chosen = f'option_{option_num}'
-                    self._display.fill(screen=screens[f'option_{option_num}'])
-                    self._display.show()
-
-            elif key_pressed == 'down':
+            if key_pressed == next_key:
 
                 if option_num == -1:
                     option_num = 1
@@ -814,7 +809,24 @@ class Experiment:
                     self._display.fill(screen=screens[f'option_{option_num}'])
                     self._display.show()
 
-            elif key_pressed == 'space' and answer_chosen:
+            elif key_pressed == previous_key:
+
+                if option_num == -1:
+                    option_num = 1
+                    answer_chosen = f'option_{option_num}'
+                    self._display.fill(screen=screens[f'option_{option_num}'])
+                    self._display.show()
+
+                elif option_num == 1:
+                    pass
+
+                else:
+                    option_num -= 1
+                    answer_chosen = f'option_{option_num}'
+                    self._display.fill(screen=screens[f'option_{option_num}'])
+                    self._display.show()
+
+            elif key_pressed in confirm_keys and answer_chosen:
                 valid_answer = True
 
             key_pressed = ''
