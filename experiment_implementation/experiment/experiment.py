@@ -525,10 +525,25 @@ class Experiment:
                     arrow_image = arrow_image.resize((int(arrow_width), int(arrow_width)))
                     arrow_image.save(arrow_img_path)
 
-                    question_screen.draw_image(
-                        arrow_img_path,
-                        pos=(constants.IMAGE_WIDTH_PX // 2, (constants.IMAGE_HEIGHT_PX // 5) * 3),
-                    )
+                    if constants.SCRIPT_DIRECTION == 'ttb':
+                        # In vertical (ttb) scripts the four option boxes form a plus
+                        # around an empty middle; put the arrow in that gap, i.e. the
+                        # centre of the boxes' bounding box, instead of the fixed
+                        # horizontal position used for ltr/rtl.
+                        x_min = min(constants.ARROW_LEFT[0], constants.ARROW_RIGHT[0],
+                                    constants.ARROW_UP[0], constants.ARROW_DOWN[0])
+                        x_max = max(constants.ARROW_LEFT[2], constants.ARROW_RIGHT[2],
+                                    constants.ARROW_UP[2], constants.ARROW_DOWN[2])
+                        y_min = min(constants.ARROW_LEFT[1], constants.ARROW_RIGHT[1],
+                                    constants.ARROW_UP[1], constants.ARROW_DOWN[1])
+                        y_max = max(constants.ARROW_LEFT[3], constants.ARROW_RIGHT[3],
+                                    constants.ARROW_UP[3], constants.ARROW_DOWN[3])
+                        arrow_pos = ((x_min + x_max) // 2, (y_min + y_max) // 2)
+                    else:
+                        arrow_pos = (constants.IMAGE_WIDTH_PX // 2,
+                                     (constants.IMAGE_HEIGHT_PX // 5) * 3)
+
+                    question_screen.draw_image(arrow_img_path, pos=arrow_pos)
 
                 relative_question_page_path = question_dict['relative_path']
 
