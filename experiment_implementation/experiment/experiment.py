@@ -892,7 +892,7 @@ class Experiment:
                     get_time(), trial_id, pd.NA, 'fixation_trigger', screen_onset, timestamp,
                     'ctrl c', False, pd.NA, f'ctrl-c_pressed_by_user_with_key_{key}_modifier_{modifier}'
                 )
-                self.finish_experiment()
+                self.finish_experiment(participant_questionnaire=False)
 
             # key q: skip fixation trigger and continue with experiment
             elif key in [113, 81] or (key in [113, 81] and modifier == 8):
