@@ -10,6 +10,7 @@ from pygaze.logfile import Logfile
 
 import constants
 from devices.screen import MultiplEyeScreen
+from utils.question_id import build_question_identifier
 
 from start_multipleye_session import SessionMode
 
@@ -212,7 +213,7 @@ def get_stimuli_screens(
             snippet_no = row['snippet_no']
 
             # the question id is a 4 or 5 digit number that is unique for each question
-            question_id = str(stimulus_id) + str(snippet_no) + str(condition_no) + str(question_no)
+            question_id = build_question_identifier(stimulus_id, snippet_no, condition_no, question_no)
 
             question_img_path = row['question_img_path']
             target = row['target']
